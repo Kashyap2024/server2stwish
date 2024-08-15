@@ -132,29 +132,27 @@ app.post('/api/html', async (req, res) => {
 
         // Construct the m3u8 link
         const makeurl = `https://${baseUrl}/${newPattern}/${langValue}/master.m3u8?t=${valueBeforeM3u8}&s=${dataValue}&e=${srvValue}&f=${fileIdValue}&srv=${pallValue}&i=0.4&sp=${spValue}&p1=${pallValue}&p2=${pallValue}&asn=${asnValue}`;
-
+        
         fileLink = makeurl;
-        console.log(fileLink)
+        console.log('Constructed m3u8 link:', fileLink);
 
-        if (fileLink) {
-            try {
-                const response = await fetch(fileLink);
-                if (response.ok) {
-                    return res.json({
-                        type: 'embed',
-                        source: fileLink,
-                        message: 'm3u8 link generated successfully',
-                    });
-                } else {
-                    throw new Error('File link returned a 404 error code');
-                }
-            } catch (error) {
-                return res.status(500).json({ error: 'Error fetching file link: ' + error.message });
-            }
+        // Fetch the m3u8 link
+        const response = await fetch(fileLink);
+        console.log('Fetch response status:', response.status);
+
+        if (response.ok) {
+            const responseData = await response.text(); 
+            return res.json({
+                type: 'embed',
+                source: fileLink,
+                message: 'm3u8 link generated successfully'
+            });
         } else {
-            throw new Error('Failed to generate file link');
+            console.error('Failed to fetch m3u8 link, status:', response.status);
+            return res.status(response.status).json({ error: 'Failed to fetch m3u8 link' });
         }
     } catch (error) {
+        console.error('Error during processing:', error.message);
         return res.status(500).json({ error: 'Error during processing: ' + error.message });
     }
 });
@@ -162,5 +160,5 @@ app.post('/api/html', async (req, res) => {
 // Start the server
 const PORT = 4500;
 app.listen(PORT, () => {
-    console.log(`Server is running...`);
+    console.log(`Server is running on port ${PORT}`);
 });
