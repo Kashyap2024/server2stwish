@@ -4,6 +4,8 @@ const axios = require('axios');
 
 const app = express();
 
+// server name is Stream Wish
+
 // Middleware to parse incoming HTML data
 app.use(bodyParser.text({ type: 'text/html' }));
 
@@ -11,6 +13,7 @@ app.use(bodyParser.text({ type: 'text/html' }));
 app.post('/api/html', async (req, res) => {
     try {
         const videoPageContent = req.body;
+        // console.log(videoPageContent);
 
         // Initialize variables
         let fileLink = '';
@@ -61,8 +64,11 @@ app.post('/api/html', async (req, res) => {
 
         if (baseMatch) {
             const reversedSegments = `${baseMatch[1]}`;
-            const draft2baseurl = `${draftbaseMatch[1]}`;
+            const draft2baseurl = draftbaseMatch ? `${draftbaseMatch[1]}` : '';
             baseUrl = `${reversedSegments}.cdn-${draft2baseurl}.com`;
+            console.log(baseUrl);
+        } else {
+            console.error('Base URL match not found.');
         }
 
         if (newPatternMatch) {
@@ -73,12 +79,18 @@ app.post('/api/html', async (req, res) => {
             if (newPatternmatch2) {
                 const reversebefore2 = `${newPatternmatch2[1]}|${newPatternmatch2[2]}|hls2`;
                 newPattern = reversebefore2.split('|').reverse().join('/');
+            } else {
+                console.error('New Pattern match not found.');
             }
+            console.log(newPattern);
         }
 
         if (langMatch) {
             lanmatchvaluepipe = langMatch[1];
             langValue = `${lanmatchvaluepipe}`;
+            console.log(langValue);
+        } else {
+            console.error('Language match not found.');
         }
 
         if (m3u8Match) {
@@ -94,32 +106,55 @@ app.post('/api/html', async (req, res) => {
                 } else {
                     valueBeforeM3u8 = `${parts[1]}-${parts[0]}`;
                 }
+            } else {
+                console.error('Unexpected parts length for m3u8 match.');
             }
+            console.log(valueBeforeM3u8);
+        } else {
+            console.error('m3u8 match not found.');
         }
 
         if (dataMatch) {
             dataValue = dataMatch[1];
+            console.log(dataValue);
+        } else {
+            console.error('Data match not found.');
         }
 
         if (srvMatch) {
             srvValue = srvMatch[1];
+            console.log(srvValue);
+        } else {
+            console.error('SRV match not found.');
         }
 
         if (fileIdMatch) {
             fileIdValue = fileIdMatch[1];
+            console.log(fileIdValue);
+        } else {
+            console.error('File ID match not found.');
         }
 
         if (cMatch) {
             const fullCValue = cMatch[0];
             cValue = fullCValue;
+            console.log(cValue);
+        } else {
+            console.error('C Value match not found.');
         }
 
         if (asnMatch) {
             asnValue = asnMatch[1];
+            console.log(asnValue);
+        } else {
+            console.error('ASN match not found.');
         }
 
         if (spMatch) {
             spValue = spMatch[1];
+            console.log(spValue);
+        } else {
+            console.error('SP match not found.');
         }
 
         if (pallMatch) {
@@ -130,10 +165,16 @@ app.post('/api/html', async (req, res) => {
             } else {
                 pallValue = secondValue;
             }
+            console.log(pallValue);
+        } else {
+            console.error('Pall match not found.');
         }
 
         if (cookieMatch) {
             cookieFileIdValue = cookieMatch[1];
+            console.log(cookieFileIdValue);
+        } else {
+            console.error('Cookie match not found.');
         }
 
         // Construct the m3u8 link
