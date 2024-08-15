@@ -138,8 +138,8 @@ app.post('/api/html', async (req, res) => {
 
         if (fileLink) {
             try {
-                const response = await axios.get(fileLink);
-                if (response.status === 200) {
+                const response = await fetch(fileLink);
+                if (response.ok) {
                     return res.json({
                         type: 'embed',
                         source: fileLink,
