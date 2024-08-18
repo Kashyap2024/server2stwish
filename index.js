@@ -13,7 +13,7 @@ app.use(bodyParser.text({ type: 'text/html' }));
 app.post('/api/html', async (req, res) => {
     try {
         const videoPageContent = req.body;
-        console.log(videoPageContent);
+        // console.log(videoPageContent);
 
         // Initialize variables
         let fileLink = '';
@@ -33,7 +33,7 @@ app.post('/api/html', async (req, res) => {
 
         // All Regular Expressions
         const baseUrlRegular = /\|([^|]+)\|sources\|/;
-        const draftbaseUrlRegular = /\|([^|]+)\jpg\|/;
+        const draftbaseUrlRegular = /\|([^|]+)\|jpg\|/;
         const newPatternRegular = /\|kind(?:\|[^|]*)?\|(\d{5})\|(\d{2})\|/;
         const newPatternRegular3 = /\|([^|]+)\|([^|]+)\|hls2\|/;
         const langValueRegular = /\|master\|([^|]+)\|/;
@@ -101,8 +101,8 @@ app.post('/api/html', async (req, res) => {
                 valueBeforeM3u8 = parts[0];
             } else if (parts.length === 2) {
                 // Check if parts[1] is a number
-                if (!isNaN(parts[1])) {
-                    valueBeforeM3u8 = parts[0];
+                if (!isNaN(parts[0])) {
+                    valueBeforeM3u8 = parts[1];
                 } else {
                     valueBeforeM3u8 = `${parts[1]}-${parts[0]}`;
                 }
@@ -178,7 +178,7 @@ app.post('/api/html', async (req, res) => {
         }
 
         // Construct the m3u8 link
-        const makeurl = `https://${baseUrl}/${newPattern}/${langValue}/master.m3u8?t=${valueBeforeM3u8}&s=${dataValue}&e=${srvValue}&f=${fileIdValue}&srv=${pallValue}&i=0.4&sp=${spValue}&p1=${pallValue}&p2=${pallValue}&asn=${asnValue}`;
+        const makeurl = `https://${baseUrl}/${newPattern}/${langValue}/master.m3u8?t=${valueBeforeM3u8}&s=${dataValue}&e=${srvValue}&f=${fileIdValue}&srv=${pallValue}&i=0.0&sp=${spValue}&p1=${pallValue}&p2=${pallValue}&asn=${asnValue}`;
         
         fileLink = makeurl;
         console.log('Constructed m3u8 link:', fileLink);
