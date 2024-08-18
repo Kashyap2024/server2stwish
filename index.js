@@ -33,7 +33,7 @@ app.post('/api/html', async (req, res) => {
 
         // All Regular Expressions
         const baseUrlRegular = /\|([^|]+)\|sources\|/;
-        const draftbaseUrlRegular = /\|([^|]+)\|cdn\|/;
+        const draftbaseUrlRegular = /\|([^|]+)\jpg\|/;
         const newPatternRegular = /\|kind(?:\|[^|]*)?\|(\d{5})\|(\d{2})\|/;
         const newPatternRegular3 = /\|([^|]+)\|([^|]+)\|hls2\|/;
         const langValueRegular = /\|master\|([^|]+)\|/;
@@ -65,7 +65,7 @@ app.post('/api/html', async (req, res) => {
         if (baseMatch) {
             const reversedSegments = `${baseMatch[1]}`;
             const draft2baseurl = draftbaseMatch ? `${draftbaseMatch[1]}` : '';
-            baseUrl = `${reversedSegments}.cdn-${draft2baseurl}.com`;
+            baseUrl = `${reversedSegments}.${draft2baseurl}.com`;
             console.log(baseUrl);
         } else {
             console.error('Base URL match not found.');
