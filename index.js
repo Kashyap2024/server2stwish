@@ -13,7 +13,7 @@ app.use(bodyParser.text({ type: 'text/html' }));
 app.post('/api/html', async (req, res) => {
     try {
         const videoPageContent = req.body;
-        // console.log(videoPageContent);
+        console.log(videoPageContent);
 
         // Initialize variables
         let fileLink = '';
