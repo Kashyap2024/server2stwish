@@ -30,6 +30,7 @@ app.post('/api/html', async (req, res) => {
         let pallValue = '';
         let cookieFileIdValue = '';
         let lanmatchvaluepipe = '';
+        let ivalue = ''
 
         // All Regular Expressions
         const baseUrlRegular = /\|([^|]+)\|sources\|/;
@@ -65,7 +66,14 @@ app.post('/api/html', async (req, res) => {
         if (baseMatch) {
             const reversedSegments = `${baseMatch[1]}`;
             const draft2baseurl = draftbaseMatch ? `${draftbaseMatch[1]}` : '';
-            baseUrl = `${reversedSegments}.${draft2baseurl}.com`;
+            const draftbase3 = `cdn-jupiter`
+            if (draft2baseurl === 'pradoi') {
+                ivalue = `0.0`
+                baseUrl = `${reversedSegments}.${draft2baseurl}.com`;
+            } else {
+                ivalue = `0.4`
+                baseUrl = `${reversedSegments}.${draftbase3}.com`;
+            }
             console.log(baseUrl);
         } else {
             console.error('Base URL match not found.');
@@ -178,7 +186,7 @@ app.post('/api/html', async (req, res) => {
         }
 
         // Construct the m3u8 link
-        const makeurl = `https://${baseUrl}/${newPattern}/${langValue}/master.m3u8?t=${valueBeforeM3u8}&s=${dataValue}&e=${srvValue}&f=${fileIdValue}&srv=${pallValue}&i=0.0&sp=${spValue}&p1=${pallValue}&p2=${pallValue}&asn=${asnValue}`;
+        const makeurl = `https://${baseUrl}/${newPattern}/${langValue}/master.m3u8?t=${valueBeforeM3u8}&s=${dataValue}&e=${srvValue}&f=${fileIdValue}&srv=${pallValue}&i=${ivalue}&sp=${spValue}&p1=${pallValue}&p2=${pallValue}&asn=${asnValue}`;
         
         fileLink = makeurl;
         console.log('Constructed m3u8 link:', fileLink);
