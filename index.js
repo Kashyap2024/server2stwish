@@ -66,6 +66,7 @@ app.post('/api/html', async (req, res) => {
         if (baseMatch) {
             const reversedSegments = `${baseMatch[1]}`;
             const draft2baseurl = draftbaseMatch ? `${draftbaseMatch[1]}` : '';
+<<<<<<< HEAD
             const draftbase3 = `cdn-jupiter`
             if (draft2baseurl === 'pradoi') {
                 ivalue = `0.0`
@@ -74,6 +75,9 @@ app.post('/api/html', async (req, res) => {
                 ivalue = `0.4`
                 baseUrl = `${reversedSegments}.${draftbase3}.com`;
             }
+=======
+            baseUrl = `${reversedSegments}.${draft2baseurl}.com`;
+>>>>>>> 1af8b09a63a93c36777249d6290d564539d00927
             console.log(baseUrl);
         } else {
             console.error('Base URL match not found.');
@@ -186,7 +190,11 @@ app.post('/api/html', async (req, res) => {
         }
 
         // Construct the m3u8 link
+<<<<<<< HEAD
         const makeurl = `https://${baseUrl}/${newPattern}/${langValue}/master.m3u8?t=${valueBeforeM3u8}&s=${dataValue}&e=${srvValue}&f=${fileIdValue}&srv=${pallValue}&i=${ivalue}&sp=${spValue}&p1=${pallValue}&p2=${pallValue}&asn=${asnValue}`;
+=======
+        const makeurl = `https://${baseUrl}/${newPattern}/${langValue}/master.m3u8?t=${valueBeforeM3u8}&s=${dataValue}&e=${srvValue}&f=${fileIdValue}&srv=${pallValue}&i=0.0&sp=${spValue}&p1=${pallValue}&p2=${pallValue}&asn=${asnValue}`;
+>>>>>>> 1af8b09a63a93c36777249d6290d564539d00927
         
         fileLink = makeurl;
         console.log('Constructed m3u8 link:', fileLink);
