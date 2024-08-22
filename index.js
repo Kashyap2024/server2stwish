@@ -16,7 +16,6 @@ app.post('/api/html', async (req, res) => {
         // console.log(videoPageContent);
 
         // Initialize variables
-        let fileLink = '';
         let baseUrl = '';
         let newPattern = '';
         let langValue = '';
@@ -29,52 +28,53 @@ app.post('/api/html', async (req, res) => {
         let spValue = '';
         let pallValue = '';
         let cookieFileIdValue = '';
-        let lanmatchvaluepipe = '';
-        let ivalue = ''
+        let ivalue = '';
 
-        // All Regular Expressions
+        // Regular expressions
         const baseUrlRegular = /\|([^|]+)\|sources\|/;
         const draftbaseUrlRegular = /\|([^|]+)\|jpg\|/;
-        const newPatternRegular = /\|kind(?:\|[^|]*)?\|(\d{5})\|(\d{2})\|/;
+        const newPatternRegular = /\|kind(?:\|[^|]*)?\|(\d{5})(?:\|[^|]*)?\|(\d{2})\|/;
         const newPatternRegular3 = /\|([^|]+)\|([^|]+)\|hls2\|/;
         const langValueRegular = /\|master\|([^|]+)\|/;
         const valueBeforeM3u8Regular = /\|129600\|([^|]+(?:\|[^|]+)*)\|m3u8\|/;
-        const dataValueRegular = /\|data\|([^|]+)\|/;
+        const dataValueRegular = /\|data(?:\|[^|]*)?\|(\d+)\|/;
+        const dataValueRegular2 = /\|get(?:\|[^|]*)?\|(\d+)\|/;
         const srvValueRegular = /\|srv\|([^|]+)\|/;
         const fileIdRegular = /file_id',\s*'([^']+)/;
         const cValueRegular = /ab:\[{[^]*?([0-9]+\.[0-9])&/;
         const asnValueRegular = /\|([^|]+)\|asn\|/;
         const spValueRegular = /\|([^|]+)\|sp\|/;
-        const pallValueRegular = /file\|([^|]+)\|([^|]+)/;
+        const pallValueRegular = /\|file\|(?:vtt\|)?([^|]+)\|/;
         const cookieValueRegular = /\$.cookie\('file_id',\s*'([^']+)/;
 
-        // Processing the HTML content with regex matches
-        const baseMatch = videoPageContent.match(baseUrlRegular);
-        const draftbaseMatch = videoPageContent.match(draftbaseUrlRegular);
-        const newPatternMatch = videoPageContent.match(newPatternRegular);
-        const langMatch = videoPageContent.match(langValueRegular);
-        const m3u8Match = videoPageContent.match(valueBeforeM3u8Regular);
-        const dataMatch = videoPageContent.match(dataValueRegular);
-        const srvMatch = videoPageContent.match(srvValueRegular);
-        const fileIdMatch = videoPageContent.match(fileIdRegular);
-        const cMatch = videoPageContent.match(cValueRegular);
-        const asnMatch = videoPageContent.match(asnValueRegular);
-        const spMatch = videoPageContent.match(spValueRegular);
-        const pallMatch = videoPageContent.match(pallValueRegular);
-        const cookieMatch = videoPageContent.match(cookieValueRegular);
+        // Processing HTML data
+        const baseMatch = htmlData.match(baseUrlRegular);
+        const draftbaseMatch = htmlData.match(draftbaseUrlRegular);
+        const newPatternMatch = htmlData.match(newPatternRegular);
+        const langMatch = htmlData.match(langValueRegular);
+        const m3u8Match = htmlData.match(valueBeforeM3u8Regular);
+        const dataMatch = htmlData.match(dataValueRegular);
+        const dataMatch2 = htmlData.match(dataValueRegular2);
+        const srvMatch = htmlData.match(srvValueRegular);
+        const fileIdMatch = htmlData.match(fileIdRegular);
+        const cMatch = htmlData.match(cValueRegular);
+        const asnMatch = htmlData.match(asnValueRegular);
+        const spMatch = htmlData.match(spValueRegular);
+        const pallMatch = htmlData.match(pallValueRegular);
+        const cookieMatch = htmlData.match(cookieValueRegular);
 
         if (baseMatch) {
             const reversedSegments = `${baseMatch[1]}`;
             const draft2baseurl = draftbaseMatch ? `${draftbaseMatch[1]}` : '';
-            const draftbase3 = `cdn-jupiter`
+            const draftbase3 = `cdn-jupiter`;
             if (draft2baseurl === 'pradoi') {
-                ivalue = `0.0`
+                ivalue = `0.0`;
                 baseUrl = `${reversedSegments}.${draft2baseurl}.com`;
             } else {
-                ivalue = `0.4`
+                ivalue = `0.4`;
                 baseUrl = `${reversedSegments}.${draftbase3}.com`;
             }
-            console.log(baseUrl);
+            // console.log(baseUrl);
         } else {
             console.error('Base URL match not found.');
         }
@@ -83,20 +83,19 @@ app.post('/api/html', async (req, res) => {
             const reversebefore = `${newPatternMatch[1]}|${newPatternMatch[2]}|hls2`;
             newPattern = reversebefore.split('|').reverse().join('/');
         } else {
-            const newPatternmatch2 = videoPageContent.match(newPatternRegular3);
+            const newPatternmatch2 = htmlData.match(newPatternRegular3);
             if (newPatternmatch2) {
                 const reversebefore2 = `${newPatternmatch2[1]}|${newPatternmatch2[2]}|hls2`;
                 newPattern = reversebefore2.split('|').reverse().join('/');
             } else {
                 console.error('New Pattern match not found.');
             }
-            console.log(newPattern);
+            // console.log(newPattern);
         }
 
         if (langMatch) {
-            lanmatchvaluepipe = langMatch[1];
-            langValue = `${lanmatchvaluepipe}`;
-            console.log(langValue);
+            langValue = `${langMatch[1]}`;
+            // console.log(langValue);
         } else {
             console.error('Language match not found.');
         }
@@ -104,90 +103,81 @@ app.post('/api/html', async (req, res) => {
         if (m3u8Match) {
             const valueBeforeM3u8pipe = m3u8Match[1];
             const parts = valueBeforeM3u8pipe.split('|');
-            
+
             if (parts.length === 1) {
                 valueBeforeM3u8 = parts[0];
             } else if (parts.length === 2) {
-                // Check if parts[1] is a number
-                if (!isNaN(parts[0])) {
-                    valueBeforeM3u8 = parts[1];
-                } else {
-                    valueBeforeM3u8 = `${parts[1]}-${parts[0]}`;
-                }
+                valueBeforeM3u8 = !isNaN(parts[0]) ? parts[1] : `${parts[1]}-${parts[0]}`;
             } else {
                 console.error('Unexpected parts length for m3u8 match.');
             }
-            console.log(valueBeforeM3u8);
+            // console.log(valueBeforeM3u8);
         } else {
-            console.error('m3u8 match not found.');
+            // console.error('m3u8 match not found.');
         }
 
         if (dataMatch) {
             dataValue = dataMatch[1];
-            console.log(dataValue);
+            // console.log(dataValue);
+        } else if (dataMatch2) {
+            dataValue = dataMatch2[1];
+            // console.log(dataValue);
         } else {
             console.error('Data match not found.');
         }
 
         if (srvMatch) {
             srvValue = srvMatch[1];
-            console.log(srvValue);
+            // console.log(srvValue);
         } else {
             console.error('SRV match not found.');
         }
 
         if (fileIdMatch) {
             fileIdValue = fileIdMatch[1];
-            console.log(fileIdValue);
+            // console.log(fileIdValue);
         } else {
             console.error('File ID match not found.');
         }
 
         if (cMatch) {
-            const fullCValue = cMatch[0];
-            cValue = fullCValue;
-            console.log(cValue);
+            cValue = cMatch[0];
+            // console.log(cValue);
         } else {
-            console.error('C Value match not found.');
+            // console.error('C Value match not found.');
         }
 
         if (asnMatch) {
             asnValue = asnMatch[1];
-            console.log(asnValue);
+            // console.log(asnValue);
         } else {
             console.error('ASN match not found.');
         }
 
         if (spMatch) {
             spValue = spMatch[1];
-            console.log(spValue);
+            // console.log(spValue);
         } else {
             console.error('SP match not found.');
         }
 
         if (pallMatch) {
-            const firstValue = pallMatch[1];
-            const secondValue = pallMatch[2];
-            if (isNaN(firstValue)) {
-                pallValue = firstValue;
-            } else {
-                pallValue = secondValue;
-            }
-            console.log(pallValue);
+            pallValue = isNaN(pallMatch[1]) ? pallMatch[1] : pallMatch[2];
+            // console.log(pallValue);
         } else {
             console.error('Pall match not found.');
         }
 
         if (cookieMatch) {
             cookieFileIdValue = cookieMatch[1];
-            console.log(cookieFileIdValue);
+            // console.log(cookieFileIdValue);
         } else {
             console.error('Cookie match not found.');
         }
 
         // Construct the m3u8 link
         const makeurl = `https://${baseUrl}/${newPattern}/${langValue}/master.m3u8?t=${valueBeforeM3u8}&s=${dataValue}&e=${srvValue}&f=${fileIdValue}&srv=${pallValue}&i=${ivalue}&sp=${spValue}&p1=${pallValue}&p2=${pallValue}&asn=${asnValue}`;
-        
+
         fileLink = makeurl;
         console.log('Constructed m3u8 link:', fileLink);
 
